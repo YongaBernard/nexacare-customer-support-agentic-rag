@@ -16,3 +16,4 @@ pydantic
 pytest
 httpx
 requests
+langchain-chroma

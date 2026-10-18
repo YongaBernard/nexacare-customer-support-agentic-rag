@@ -1,0 +1,29 @@
+
+services:
+  api:
+    build: .
+    image: nexacare-app:local
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8001
+    ports:
+      - "8002:8001"
+    environment:
+      PYTHONUNBUFFERED: "1"
+      HF_HOME: /root/.cache/huggingface
+    volumes:
+      - ./chroma_db:/app/chroma_db
+      - model_cache:/root/.cache
+    restart: unless-stopped
+
+  streamlit:
+    image: nexacare-app:local
+    command: streamlit run streamlit_app.py --server.address=0.0.0.0 --server.port=8501
+    ports:
+      - "8502:8501"
+    environment:
+      API_URL: http://api:8001/support
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  model_cache:
